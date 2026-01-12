@@ -5,7 +5,6 @@ This repository contains scripts, configuration files, and summary results used 
 
 ## What’s in this repo
 - Reproducible command logs and scripts for each assembly stage
-- Configuration templates for samples and parameters
 - Assembly evaluation outputs (e.g., BUSCO/QUAST/Merqury summaries)
 - Documentation describing design choices and known issues
 
@@ -14,6 +13,7 @@ This repository contains scripts, configuration files, and summary results used 
 ## Data types
 - PacBio HiFi reads (primary assembly input)
 - Hi-C read pairs (scaffolding / validation)
+- Ultima reads (validation)
 
 ## High-level workflow
 1. **QC & read stats**
@@ -24,4 +24,4 @@ This repository contains scripts, configuration files, and summary results used 
 6. **Assembly evaluation**
    - BUSCO completeness
    - QUAST assembly metrics
-   - Merqury k-mer completeness/QV (optional)
+   - Merqury k-mer completeness
