@@ -1,0 +1,52 @@
+# Large genomics files
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.cram
+*.sam
+*.bai
+*.crai
+*.vcf
+*.vcf.gz
+*.gfa
+*.paf
+
+# Assemblies (keep final small references only if desired)
+*.fasta
+*.fa
+*.fna
+*.fas
+*.fasta.gz
+*.fa.gz
+
+# Common tool outputs
+*.tmp
+*.log
+*.out
+*.err
+*.stats
+
+# Snakemake / Nextflow
+.snakemake/
+work/
+.nextflow*
+trace.txt
+timeline.html
+report.html
+
+# Conda
+.env/
+.conda/
+conda-env/
+mamba/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+

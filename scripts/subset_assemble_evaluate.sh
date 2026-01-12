@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Set input paths
+HIFI_READS="/data2/service_center_analyses/tumamoca_genome/raw_data/hifi/tumamoca_hifi.fastq"
+HIC_R1="/data2/service_center_analyses/tumamoca_genome/raw_data/hic/tumamoca_1.fastq.gz"
+HIC_R2="/data2/service_center_analyses/tumamoca_genome/raw_data/hic/tumamoca_2.fastq.gz"
+
+# Output directory
+#mkdir -p subset_run_results_10_22_25
+cd subset_run_results_10_22_25
+
+echo "=== Step 1: Randomly sample one-third of HiFi reads ==="
+#seqtk sample -s100 "$HIFI_READS" 0.33 > hifi_random_1_3.fastq
+
+echo "=== Step 2: Filter HiFi reads >11kb and sample one-third ==="
+#seqkit seq -m 11000 "$HIFI_READS" > hifi_over11kb.fastq
+#seqtk sample -s100 hifi_over11kb.fastq 0.66 > hifi_long_11kb_2_3.fastq
+
+echo "=== Step 3: Assemble random subset with Hi-C and -l3 ==="
+#mkdir -p asm_random
+#hifiasm -o asm_random/asm_random -t 100 -l3 --h1 "$HIC_R1" --h2 "$HIC_R2" hifi_random_1_3.fastq > asm_random/asm_random.log
+#awk '/^S/{print ">"$2;print $3}' ./asm_random/asm_random.hic.hap1.p_ctg.gfa > ./asm_random/asm_random.hic.hap1.p_ctg.fa
+#awk '/^S/{print ">"$2;print $3}' ./asm_random/asm_random.hic.hap2.p_ctg.gfa > ./asm_random/asm_random.hic.hap2.p_ctg.fa
+#cat ./asm_random/asm_random.hic.hap1.p_ctg.fa ./asm_random/asm_random.hic.hap2.p_ctg.fa > ./asm_random/asm_random.combined.p_ctg.fa
+
+echo "=== Step 4: Assemble long-read subset with Hi-C and -l3 ==="
+#mkdir -p asm_long
+#hifiasm -o asm_long/asm_long -t 100 -l3 --h1 "$HIC_R1" --h2 "$HIC_R2" hifi_long_11kb_2_3.fastq > asm_long/asm_long.log
+#awk '/^S/{print ">"$2;print $3}' ./asm_long/asm_long.hic.hap1.p_ctg.gfa > ./asm_long/asm_long.hic.hap1.p_ctg.fa
+#awk '/^S/{print ">"$2;print $3}' ./asm_long/asm_long.hic.hap2.p_ctg.gfa > ./asm_long/asm_long.hic.hap2.p_ctg.fa
+#cat ./asm_long/asm_long.hic.hap1.p_ctg.fa ./asm_long/asm_long.hic.hap2.p_ctg.fa > ./asm_long/asm_long.combined.p_ctg.fa
+
+echo "=== Step 5: Assembly stats (N50, size, etc.) ==="
+#assembly-stats asm_random/asm_random.hic.hap1.p_ctg.fa > asm_random/contig_stats.hic.hap1.txt
+#assembly-stats asm_random/asm_random.hic.hap2.p_ctg.fa > asm_random/contig_stats.hic.hap2.txt
+#assembly-stats asm_random/asm_random.combined.p_ctg.fa > asm_random/contig_stats.combined.txt
+#assembly-stats asm_long/asm_long.hic.hap1.p_ctg.fa > asm_long/contig_stats.hic.hap1.txt
+#assembly-stats asm_long/asm_long.hic.hap2.p_ctg.fa > asm_long/contig_stats.hic.hap2.txt
+#assembly-stats asm_long/asm_long.combined.p_ctg.fa > asm_long/contig_stats.combined.txt
+
+echo "=== Step 6: Coverage plot prep for random subset ==="
+#minimap2 -ax map-hifi -t 60 asm_random/asm_random.hic.hap1.p_ctg.fa hifi_random_1_3.fastq | samtools sort -@60 -o asm_random/aln_random.hic.hap1.bam
+#samtools depth -a asm_random/aln_random.hic.hap1.bam > asm_random/coverage_hic.hap1.txt
+#minimap2 -ax map-hifi -t 60 asm_random/asm_random.hic.hap2.p_ctg.fa hifi_random_1_3.fastq | samtools sort -@60 -o asm_random/aln_random.hic.hap2.bam
+#samtools depth -a asm_random/aln_random.hic.hap2.bam > asm_random/coverage_hic.hap2.txt
+#minimap2 -ax map-hifi -t 60 asm_random/asm_random.combined.p_ctg.fa hifi_random_1_3.fastq | samtools sort -@60 -o asm_random/aln_random.combined.bam
+samtools depth -a asm_random/aln_random.combined.bam > asm_random/coverage_combined.txt
+
+echo "=== Step 7: Coverage plot prep for long-read subset ==="
+#minimap2 -ax map-hifi -t 100 asm_long/asm_long.hic.hap1.p_ctg.fa hifi_long_8kb_1_3.fastq | samtools sort -@100 -o asm_long/aln_long.hic.hap1.bam
+#samtools depth -a asm_long/aln_long.hic.hap1.bam > asm_long/coverage_hic.hap1.txt
+#minimap2 -ax map-hifi -t 100 asm_long/asm_long.hic.hap2.p_ctg.fa hifi_long_8kb_1_3.fastq | samtools sort -@100 -o asm_long/aln_long.hic.hap2.bam
+#samtools depth -a asm_long/aln_long.hic.hap2.bam > asm_long/coverage_hic.hap2.txt
+#minimap2 -ax map-hifi -t 100 asm_long/asm_long.combined.p_ctg.fa hifi_long_8kb_1_3.fastq | samtools sort -@100 -o asm_long/aln_long.combined.bam
+samtools depth -a asm_long/aln_long.combined.bam > asm_long/coverage_combined.txt
+
+echo "=== Step 8: Run KAT comp on random assembly ==="
+kat comp -o kat_random -t 100 hifi_random_1_3.fastq asm_random/asm_random.hic.hap1.p_ctg.fa
+kat comp -o kat_random -t 100 hifi_random_1_3.fastq asm_random/asm_random.hic.hap2.p_ctg.fa
+kat comp -o kat_random -t 100 hifi_random_1_3.fastq asm_random/asm_random.combined.p_ctg.fa
+
+echo "=== Step 9: Run KAT comp on long-read assembly ==="
+kat comp -o kat_long -t 100 hifi_long_11kb_2_3.fastq asm_long/asm_long.hic.hap1.p_ctg.fa
+kat comp -o kat_long -t 100 hifi_long_11kb_2_3.fastq asm_long/asm_long.hic.hap2.p_ctg.fa
+kat comp -o kat_long -t 100 hifi_long_11kb_2_3.fastq asm_long/asm_long.combined.p_ctg.fa
+
+echo "=== Step 10: All done. You can now interpret coverage, k-mers, and contig stats. ==="
+
